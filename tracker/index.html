@@ -1504,6 +1504,7 @@ body{
     setOtherVisibility("ss-topic","ss-topic-other");
     setOtherVisibility("ss-skill","ss-skill-other");
     setOtherVisibility("ss-type","ss-type-other");
+    requestAnimationFrame(reportFrameHeight);
   }
 
   function startActivity(){
@@ -1788,10 +1789,8 @@ body{
 
   window.addEventListener("load", reportFrameHeight);
   window.addEventListener("resize", reportFrameHeight);
-  if(window.ResizeObserver){
-    new ResizeObserver(reportFrameHeight).observe(document.documentElement);
-  }else{
-    setInterval(reportFrameHeight, 1000);
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(reportFrameHeight);
   }
 })();
 </script>
