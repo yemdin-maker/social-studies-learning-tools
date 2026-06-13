@@ -298,6 +298,61 @@
     });
   }
 
+  function postBooking(params) {
+    return new Promise(function(resolve, reject) {
+      if (API_URL.indexOf("PASTE_YOUR_") === 0) {
+        reject(new Error("Add the booking Apps Script URL to this form first."));
+        return;
+      }
+
+      var frameName = "hhBookingFrame_" + Date.now() + "_" + Math.floor(Math.random() * 1000000);
+      var iframe = document.createElement("iframe");
+      var form = document.createElement("form");
+      var timeout;
+
+      iframe.name = frameName;
+      iframe.hidden = true;
+      iframe.setAttribute("aria-hidden", "true");
+      form.method = "POST";
+      form.action = API_URL;
+      form.target = frameName;
+      form.hidden = true;
+      form.acceptCharset = "UTF-8";
+
+      Object.keys(params).forEach(function(key) {
+        var input = document.createElement("input");
+        input.type = "hidden";
+        input.name = key;
+        input.value = params[key] == null ? "" : params[key];
+        form.appendChild(input);
+      });
+
+      function cleanup() {
+        clearTimeout(timeout);
+        window.removeEventListener("message", receiveResult);
+        if (form.parentNode) form.parentNode.removeChild(form);
+        if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+      }
+
+      function receiveResult(event) {
+        var message = event.data;
+        if (!message || message.type !== "history-help-booking-result" || message.requestId !== params.requestId) return;
+        cleanup();
+        if (message.result && message.result.ok) resolve(message.result);
+        else reject(new Error(message.result && message.result.error ? message.result.error : "The booking request failed."));
+      }
+
+      window.addEventListener("message", receiveResult);
+      document.body.appendChild(iframe);
+      document.body.appendChild(form);
+      timeout = setTimeout(function() {
+        cleanup();
+        reject(new Error("The booking database took too long to respond. Please check your connection and try again."));
+      }, 20000);
+      form.submit();
+    });
+  }
+
   function loadAvailability() {
     loadingAvailability = true;
     availability = {};
@@ -418,7 +473,7 @@
     submitButton.textContent = "Confirming...";
     if (!requestId) requestId = "booking-" + Date.now() + "-" + Math.random().toString(16).slice(2);
 
-    api({
+    postBooking({
       action: "book",
       date: dateKey(selectedDate),
       time: selectedTime,
