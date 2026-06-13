@@ -33,6 +33,13 @@ function doGet(e) {
       return respond(createBooking(p), callback);
     }
 
+    if (action === "bookingstatus") {
+      const requestId = cleanText(p.requestId, 100);
+      if (!requestId) return respond({ ok: false, error: "Missing requestId" }, callback);
+      const bookingId = findRequest(getBookingsSheet(), requestId);
+      return respond({ ok: true, booked: Boolean(bookingId), bookingId: bookingId }, callback);
+    }
+
     return respond({ ok: false, error: "Invalid action" }, callback);
   } catch (err) {
     return respond({ ok: false, error: String(err.message || err) }, callback);
