@@ -309,6 +309,8 @@
       var iframe = document.createElement("iframe");
       var form = document.createElement("form");
       var timeout;
+      var pollTimer;
+      var finished = false;
 
       iframe.name = frameName;
       iframe.hidden = true;
@@ -329,27 +331,45 @@
 
       function cleanup() {
         clearTimeout(timeout);
+        clearTimeout(pollTimer);
         window.removeEventListener("message", receiveResult);
         if (form.parentNode) form.parentNode.removeChild(form);
         if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
       }
 
+      function finish(error, result) {
+        if (finished) return;
+        finished = true;
+        cleanup();
+        if (error) reject(error);
+        else resolve(result);
+      }
+
       function receiveResult(event) {
         var message = event.data;
         if (!message || message.type !== "history-help-booking-result" || message.requestId !== params.requestId) return;
-        cleanup();
-        if (message.result && message.result.ok) resolve(message.result);
-        else reject(new Error(message.result && message.result.error ? message.result.error : "The booking request failed."));
+        if (message.result && message.result.ok) finish(null, message.result);
+        else finish(new Error(message.result && message.result.error ? message.result.error : "The booking request failed."));
+      }
+
+      function checkBookingStatus() {
+        if (finished) return;
+        api({ action: "bookingStatus", requestId: params.requestId }).then(function(data) {
+          if (data.booked) finish(null, data);
+          else pollTimer = setTimeout(checkBookingStatus, 1500);
+        }).catch(function() {
+          pollTimer = setTimeout(checkBookingStatus, 1500);
+        });
       }
 
       window.addEventListener("message", receiveResult);
       document.body.appendChild(iframe);
       document.body.appendChild(form);
       timeout = setTimeout(function() {
-        cleanup();
-        reject(new Error("The booking database took too long to respond. Please check your connection and try again."));
-      }, 20000);
+        finish(new Error("The booking database took too long to respond. Please check your connection and try again."));
+      }, 35000);
       form.submit();
+      pollTimer = setTimeout(checkBookingStatus, 1200);
     });
   }
 
