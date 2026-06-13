@@ -1765,5 +1765,21 @@
       clearInterval(wait);
     }
   }, 100);
+
+  function reportFrameHeight(){
+    var height = Math.max(
+      document.documentElement.scrollHeight,
+      document.body ? document.body.scrollHeight : 0
+    );
+    window.parent.postMessage({ type:"ss-tracker-height", height:height }, "*");
+  }
+
+  window.addEventListener("load", reportFrameHeight);
+  window.addEventListener("resize", reportFrameHeight);
+  if(window.ResizeObserver){
+    new ResizeObserver(reportFrameHeight).observe(document.documentElement);
+  }else{
+    setInterval(reportFrameHeight, 1000);
+  }
 })();
 </script>
