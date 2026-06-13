@@ -1,0 +1,451 @@
+<div id="hh-booking" class="hh-booking">
+  <header class="hh-heading">
+    <h2>Tutoring Sessions</h2>
+  </header>
+
+  <section class="hh-service">
+    <h3>Schedule your tutoring session</h3>
+    <p>Meet with peers or a tutor online to learn more about a history-related topic of your choice, whether for review or schoolwork.</p>
+    <span>60 minutes</span>
+  </section>
+
+  <div id="hh-picker">
+    <div id="hh-status" class="hh-status" role="status" aria-live="polite"></div>
+    <div class="hh-date-heading">
+      <strong id="hh-selected-date"></strong>
+      <div class="hh-arrows">
+        <button id="hh-prev" type="button" aria-label="Previous week">&#8249;</button>
+        <button id="hh-next" type="button" aria-label="Next week">&#8250;</button>
+      </div>
+    </div>
+
+    <div id="hh-days" class="hh-days"></div>
+
+    <div class="hh-period">
+      <span>Group Study</span>
+      <div id="hh-morning" class="hh-times"></div>
+    </div>
+
+    <div class="hh-period">
+      <span>Tutoring</span>
+      <div id="hh-afternoon" class="hh-times"></div>
+    </div>
+  </div>
+
+  <form id="hh-details" class="hh-details" hidden>
+    <div class="hh-summary">
+      <div>
+        <strong id="hh-summary-date"></strong>
+        <p id="hh-summary-time"></p>
+      </div>
+      <button id="hh-change" type="button">Change</button>
+    </div>
+
+    <h3>Enter Details</h3>
+    <label>
+      <span>Name *</span>
+      <input name="name" type="text" required>
+    </label>
+    <label>
+      <span>Email *</span>
+      <input name="email" type="email" required>
+    </label>
+    <label>
+      <span>Topic to Study *</span>
+      <input name="topic" type="text" required>
+    </label>
+    <label>
+      <span>Type of Session *</span>
+      <select name="sessionType" required>
+        <option value="">Select a session type</option>
+        <option value="by-peers">By peers</option>
+        <option value="by-tutor">By tutor</option>
+      </select>
+    </label>
+    <label class="hh-check">
+      <input name="attendance" type="checkbox" required>
+      <span>I confirm that I am able to attend to this tutoring session.</span>
+    </label>
+    <button class="hh-confirm" type="submit">Confirm Booking</button>
+  </form>
+
+  <section id="hh-confirmation" class="hh-confirmation" hidden>
+    <div class="hh-checkmark">&#10003;</div>
+    <h3>Booking Confirmed</h3>
+    <p>We are pleased to inform you that your reservation request has been received and confirmed. Thank you!</p>
+    <div class="hh-confirmed-session">
+      <strong id="hh-confirmed-date"></strong>
+      <span id="hh-confirmed-time"></span>
+    </div>
+  </section>
+</div>
+
+<style>
+  .hh-booking, .hh-booking * { box-sizing: border-box; }
+  .hh-booking {
+    --hh-blue: #1b597c;
+    --hh-blue-dark: #123f59;
+    --hh-gold: #d3bd62;
+    --hh-gold-light: #f5e8aa;
+    --hh-ivory: #fffdf4;
+    --hh-paper: #f8f1d5;
+    --hh-ink: #29261f;
+    --hh-muted: #625d50;
+    --hh-line: #d8cda5;
+    max-width: 1120px;
+    margin: 32px auto;
+    padding: 38px 76px 50px;
+    color: var(--hh-ink);
+    background: var(--hh-ivory);
+    border: 1px solid var(--hh-line);
+    border-radius: 16px;
+    font-family: Montserrat, Arial, sans-serif;
+    box-shadow: 0 14px 34px rgba(49, 42, 20, .12);
+  }
+  .hh-heading { padding-bottom: 24px; border-bottom: 1px solid var(--hh-line); }
+  .hh-heading h2 {
+    margin: 0;
+    color: var(--hh-blue);
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 36px;
+    line-height: 1.2;
+  }
+  .hh-service { padding: 24px 0; border-bottom: 1px solid var(--hh-line); }
+  .hh-service h3, .hh-details h3 {
+    margin: 0 0 6px;
+    color: var(--hh-blue);
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 20px;
+  }
+  .hh-service p { margin: 0 0 7px; color: var(--hh-ink); font-size: 14px; line-height: 1.55; }
+  .hh-service span { color: var(--hh-muted); font-size: 13px; }
+  .hh-status { min-height: 20px; margin-top: 18px; color: var(--hh-muted); font-size: 13px; font-weight: 600; }
+  .hh-status.is-error { color: #713521; }
+  .hh-date-heading, .hh-summary { display: flex; align-items: center; justify-content: space-between; }
+  .hh-date-heading { padding: 25px 0 19px; }
+  .hh-arrows { display: flex; gap: 12px; }
+  .hh-arrows button, #hh-change {
+    border: 0; background: transparent; cursor: pointer; color: var(--hh-blue);
+  }
+  .hh-arrows button { padding: 4px 8px; font-size: 29px; font-weight: 700; line-height: 1; }
+  .hh-arrows button:hover { color: var(--hh-blue-dark); }
+  .hh-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+  .hh-day, .hh-time {
+    border: 1px solid var(--hh-line); border-radius: 6px; background: var(--hh-paper); cursor: pointer; color: var(--hh-ink);
+    font-family: Montserrat, Arial, sans-serif;
+  }
+  .hh-day { min-height: 67px; padding: 9px 5px; font-size: 14px; }
+  .hh-day span, .hh-day b { display: block; font-weight: 400; }
+  .hh-day b { margin-top: 5px; font-size: 17px; }
+  .hh-day.is-selected { border-color: #c7af4d; background: linear-gradient(135deg, var(--hh-gold-light), #ead98d); color: var(--hh-blue-dark); font-weight: 700; }
+  .hh-day.is-selected span, .hh-day.is-selected b { font-weight: 700; }
+  .hh-period { margin-top: 21px; }
+  .hh-period > span { display: block; margin-bottom: 8px; color: var(--hh-muted); font-size: 12px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; }
+  .hh-times { display: flex; flex-wrap: wrap; gap: 8px; }
+  .hh-time { min-width: 112px; padding: 10px 14px; font-size: 15px; }
+  .hh-time-label, .hh-time-count { display: block; }
+  .hh-time-count { margin-top: 4px; color: var(--hh-muted); font-size: 10px; font-weight: 600; line-height: 1.2; }
+  .hh-time:hover .hh-time-count, .hh-time:focus .hh-time-count, .hh-time.is-selected .hh-time-count { color: rgba(255,255,255,.85); }
+  .hh-time:hover, .hh-time:focus, .hh-time.is-selected { border-color: var(--hh-blue); background: var(--hh-blue); color: #fff; }
+  .hh-details { margin-top: 8px; }
+  .hh-summary { padding: 25px 0; border-bottom: 1px solid var(--hh-line); }
+  .hh-date-heading strong, .hh-summary strong { color: var(--hh-blue); font-family: "Playfair Display", Georgia, serif; font-size: 20px; }
+  .hh-summary p { margin: 10px 0 0; }
+  #hh-change { color: var(--hh-blue); font-family: Montserrat, Arial, sans-serif; font-weight: 700; text-decoration: underline; }
+  .hh-details h3 { margin: 23px 0 15px; }
+  .hh-details > label:not(.hh-check) { position: relative; display: block; margin-bottom: 18px; }
+  .hh-details > label:not(.hh-check) span {
+    position: absolute; top: 9px; left: 16px; color: var(--hh-muted); font-size: 11px; font-weight: 700; letter-spacing: .3px; pointer-events: none; text-transform: uppercase;
+  }
+  .hh-details input[type="text"], .hh-details input[type="email"], .hh-details select {
+    width: 100%; height: 54px; padding: 21px 16px 8px; border: 1px solid var(--hh-line); border-radius: 6px; background: #fff; color: var(--hh-ink);
+    font-family: Montserrat, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 1.25;
+  }
+  .hh-details select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding: 22px 44px 7px 16px;
+    color: var(--hh-ink);
+    line-height: 20px;
+    background-color: #fff;
+    background-image:
+      linear-gradient(45deg, transparent 50%, var(--hh-blue) 50%),
+      linear-gradient(135deg, var(--hh-blue) 50%, transparent 50%);
+    background-position:
+      calc(100% - 19px) 25px,
+      calc(100% - 14px) 25px;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+  }
+  .hh-details select:invalid { color: var(--hh-muted); }
+  .hh-details select option { color: var(--hh-ink); font-family: Montserrat, Arial, sans-serif; font-size: 14px; }
+  .hh-details input:focus, .hh-details select:focus { border-color: var(--hh-blue); outline: 3px solid rgba(27, 89, 124, .16); outline-offset: 1px; }
+  .hh-check { display: flex; align-items: center; gap: 9px; margin: 8px 0 28px; font-size: 14px; }
+  .hh-check input { width: 19px; height: 19px; accent-color: var(--hh-blue); }
+  .hh-confirm {
+    display: block; margin: 0 auto; padding: 14px 42px; border: 1px solid var(--hh-blue-dark); border-radius: 4px;
+    background: var(--hh-blue); color: #fff; font-family: Montserrat, Arial, sans-serif; font-size: 13px; font-weight: 700;
+    letter-spacing: .7px; text-transform: uppercase; cursor: pointer;
+  }
+  .hh-confirm:hover { background: var(--hh-blue-dark); }
+  .hh-confirm:disabled { cursor: wait; opacity: .65; }
+  .hh-confirmation { padding: 36px 0 10px; text-align: center; }
+  .hh-checkmark { width: 45px; height: 45px; margin: 0 auto 15px; border: 3px solid var(--hh-gold); border-radius: 50%; color: var(--hh-blue); font-size: 28px; font-weight: 700; line-height: 39px; }
+  .hh-confirmation h3 { margin: 0 0 8px; color: var(--hh-blue); font-family: "Playfair Display", Georgia, serif; font-size: 28px; }
+  .hh-confirmation p { max-width: 520px; margin: 0 auto 28px; color: var(--hh-muted); line-height: 1.55; }
+  .hh-confirmed-session { padding: 22px; border: 1px solid var(--hh-line); border-radius: 6px; background: var(--hh-paper); text-align: left; }
+  .hh-confirmed-session strong, .hh-confirmed-session span { display: block; }
+  .hh-confirmed-session span { margin-top: 10px; }
+  [hidden] { display: none !important; }
+  @media (max-width: 720px) {
+    .hh-booking { padding: 26px 18px 36px; border-radius: 12px; }
+    .hh-days { grid-template-columns: repeat(4, 1fr); }
+    .hh-day { min-height: 62px; }
+    .hh-time { flex: 1 1 29%; min-width: 85px; }
+  }
+</style>
+
+<script>
+(function () {
+  var app = document.getElementById("hh-booking");
+  if (!app) return;
+
+  var API_URL = "https://script.google.com/macros/s/AKfycbwVFTH3WKVNUWDYH9zxL_oFIZ4jageKBmzpt4QMygnVF6D0ZiwbpZXIx8I1czW6j3V6/exec";
+
+  var days = app.querySelector("#hh-days");
+  var morning = app.querySelector("#hh-morning");
+  var afternoon = app.querySelector("#hh-afternoon");
+  var picker = app.querySelector("#hh-picker");
+  var details = app.querySelector("#hh-details");
+  var confirmation = app.querySelector("#hh-confirmation");
+  var selectedDate = startOfDay(new Date());
+  var weekStart = startOfDay(new Date());
+  var selectedTime = "";
+  var availability = {};
+  var loadingAvailability = false;
+  var submitting = false;
+  var requestId = "";
+  var morningTimes = ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM"];
+  var afternoonTimes = ["2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM", "6:00 PM"];
+
+  function startOfDay(date) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  }
+
+  function addDays(date, amount) {
+    var next = new Date(date);
+    next.setDate(next.getDate() + amount);
+    return next;
+  }
+
+  function sameDay(a, b) {
+    return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  }
+
+  function dateTitle(date) {
+    var today = startOfDay(new Date());
+    var prefix = sameDay(date, today) ? "Today, " : "";
+    return prefix + date.toLocaleDateString(undefined, { month: "long", day: "numeric" });
+  }
+
+  function dateLabel(date) {
+    return date.toLocaleDateString(undefined, { weekday: "short" });
+  }
+
+  function dateKey(date) {
+    var year = date.getFullYear();
+    var month = String(date.getMonth() + 1).padStart(2, "0");
+    var day = String(date.getDate()).padStart(2, "0");
+    return year + "-" + month + "-" + day;
+  }
+
+  function setStatus(message, isError) {
+    var status = app.querySelector("#hh-status");
+    status.textContent = message || "";
+    status.className = "hh-status" + (isError ? " is-error" : "");
+  }
+
+  function api(params) {
+    return new Promise(function(resolve, reject) {
+      if (API_URL.indexOf("PASTE_YOUR_") === 0) {
+        reject(new Error("Add the booking Apps Script URL to this form first."));
+        return;
+      }
+      var callbackName = "hhBooking_" + Date.now() + "_" + Math.floor(Math.random() * 1000000);
+      var script = document.createElement("script");
+      var timeout;
+      params.callback = callbackName;
+      var query = Object.keys(params).map(function(key) {
+        return encodeURIComponent(key) + "=" + encodeURIComponent(params[key] == null ? "" : params[key]);
+      }).join("&");
+
+      function cleanup() {
+        clearTimeout(timeout);
+        if (script.parentNode) script.parentNode.removeChild(script);
+        try { delete window[callbackName]; } catch (e) { window[callbackName] = undefined; }
+      }
+
+      window[callbackName] = function(data) {
+        cleanup();
+        if (data && data.ok) resolve(data);
+        else reject(new Error(data && data.error ? data.error : "The booking request failed."));
+      };
+      script.onerror = function() { cleanup(); reject(new Error("Could not reach the booking database.")); };
+      timeout = setTimeout(function() { cleanup(); reject(new Error("The booking database took too long to respond.")); }, 15000);
+      script.src = API_URL + (API_URL.indexOf("?") === -1 ? "?" : "&") + query;
+      document.head.appendChild(script);
+    });
+  }
+
+  function loadAvailability() {
+    loadingAvailability = true;
+    availability = {};
+    setStatus("Checking available times...", false);
+    renderTimes(morning, morningTimes);
+    renderTimes(afternoon, afternoonTimes);
+    api({ action: "availability", date: dateKey(selectedDate) }).then(function(data) {
+      availability = data.availability || {};
+      setStatus("", false);
+    }).catch(function(error) {
+      setStatus(error.message, true);
+    }).finally(function() {
+      loadingAvailability = false;
+      renderTimes(morning, morningTimes);
+      renderTimes(afternoon, afternoonTimes);
+    });
+  }
+
+  function renderDays() {
+    days.innerHTML = "";
+    for (var i = 0; i < 7; i++) {
+      (function () {
+        var date = addDays(weekStart, i);
+        var button = document.createElement("button");
+        button.type = "button";
+        button.className = "hh-day" + (sameDay(date, selectedDate) ? " is-selected" : "");
+        button.innerHTML = "<span>" + (sameDay(date, startOfDay(new Date())) ? "Today" : dateLabel(date)) + "</span><b>" + date.getDate() + "</b>";
+        button.addEventListener("click", function () {
+          selectedDate = date;
+          selectedTime = "";
+          render();
+        });
+        days.appendChild(button);
+      }());
+    }
+  }
+
+  function renderTimes(container, times) {
+    container.innerHTML = "";
+    times.forEach(function (time) {
+      if (availability[time] && availability[time].full) return;
+      var button = document.createElement("button");
+      button.type = "button";
+      button.className = "hh-time";
+      var timeLabel = document.createElement("span");
+      timeLabel.className = "hh-time-label";
+      timeLabel.textContent = time;
+      button.appendChild(timeLabel);
+      if (container === morning) {
+        var count = document.createElement("small");
+        count.className = "hh-time-count";
+        count.textContent = loadingAvailability
+          ? "Checking..."
+          : String(availability[time] ? availability[time].booked : 0) + " of 5 signed up";
+        button.appendChild(count);
+      }
+      button.disabled = loadingAvailability;
+      button.addEventListener("click", function () {
+        selectedTime = time;
+        showDetails();
+      });
+      container.appendChild(button);
+    });
+  }
+
+  function render() {
+    app.querySelector("#hh-selected-date").textContent = dateTitle(selectedDate);
+    renderDays();
+    renderTimes(morning, morningTimes);
+    renderTimes(afternoon, afternoonTimes);
+    loadAvailability();
+  }
+
+  function endTime(time) {
+    var parts = time.match(/(\d+):(\d+) (AM|PM)/);
+    var hour = Number(parts[1]);
+    if (parts[3] === "PM" && hour !== 12) hour += 12;
+    if (parts[3] === "AM" && hour === 12) hour = 0;
+    hour += 1;
+    var suffix = hour >= 12 && hour < 24 ? "PM" : "AM";
+    var displayHour = hour % 12 || 12;
+    return displayHour + ":" + parts[2] + " " + suffix;
+  }
+
+  function showDetails() {
+    picker.hidden = true;
+    details.hidden = false;
+    app.querySelector("#hh-summary-date").textContent = dateTitle(selectedDate);
+    app.querySelector("#hh-summary-time").textContent = selectedTime + " - " + endTime(selectedTime);
+  }
+
+  app.querySelector("#hh-prev").addEventListener("click", function () {
+    var prior = addDays(weekStart, -7);
+    var today = startOfDay(new Date());
+    weekStart = prior < today ? today : prior;
+    selectedDate = weekStart;
+    render();
+  });
+
+  app.querySelector("#hh-next").addEventListener("click", function () {
+    weekStart = addDays(weekStart, 7);
+    selectedDate = weekStart;
+    render();
+  });
+
+  app.querySelector("#hh-change").addEventListener("click", function () {
+    details.hidden = true;
+    picker.hidden = false;
+    loadAvailability();
+  });
+
+  details.addEventListener("submit", function (event) {
+    event.preventDefault();
+    if (!details.reportValidity() || submitting) return;
+    submitting = true;
+    var submitButton = details.querySelector(".hh-confirm");
+    submitButton.disabled = true;
+    submitButton.textContent = "Confirming...";
+    if (!requestId) requestId = "booking-" + Date.now() + "-" + Math.random().toString(16).slice(2);
+
+    api({
+      action: "book",
+      date: dateKey(selectedDate),
+      time: selectedTime,
+      name: details.elements.name.value,
+      email: details.elements.email.value,
+      topic: details.elements.topic.value,
+      sessionType: details.elements.sessionType.value,
+      requestId: requestId
+    }).then(function() {
+      details.hidden = true;
+      confirmation.hidden = false;
+      app.querySelector("#hh-confirmed-date").textContent = dateTitle(selectedDate);
+      app.querySelector("#hh-confirmed-time").textContent = selectedTime + " - " + endTime(selectedTime);
+    }).catch(function(error) {
+      alert(error.message);
+      if (error.message.indexOf("no longer available") !== -1) {
+        details.hidden = true;
+        picker.hidden = false;
+        loadAvailability();
+      }
+    }).finally(function() {
+      submitting = false;
+      submitButton.disabled = false;
+      submitButton.textContent = "Confirm Booking";
+    });
+  });
+
+  render();
+}());
+</script>
