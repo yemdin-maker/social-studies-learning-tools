@@ -117,8 +117,15 @@ function doGet(e) {
     }
 
     if (action === "reset") {
-      deleteRowsForCode(sheet, code);
-      return respond({ ok: true }, callback);
+      const lock = LockService.getScriptLock();
+      lock.waitLock(10000);
+      try {
+        deleteRowsForCode(sheet, code);
+        deleteRewardRecord(code);
+        return respond({ ok: true, rewards: emptyRewardSummary() }, callback);
+      } finally {
+        lock.releaseLock();
+      }
     }
 
     if (action === "rewards") {
@@ -226,6 +233,26 @@ function rewardSummary(record) {
     minuteReward: MINUTE_REWARD,
     gameCost: GAME_COST
   };
+}
+
+function emptyRewardSummary() {
+  return {
+    points: 0,
+    lifetimeActivities: 0,
+    lifetimeMinutes: 0,
+    learningMilestones: 0,
+    minuteMilestones: 0,
+    gamesPlayed: 0,
+    learningReward: LEARNING_REWARD,
+    minuteReward: MINUTE_REWARD,
+    gameCost: GAME_COST
+  };
+}
+
+function deleteRewardRecord(code) {
+  const rewardsSheet = getRewardsSheet();
+  const rowNumber = findRewardRow(rewardsSheet, code);
+  if (rowNumber) rewardsSheet.deleteRow(rowNumber);
 }
 
 function saveRewardRecord(record) {
