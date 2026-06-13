@@ -120,9 +120,19 @@ function doGet(e) {
       const lock = LockService.getScriptLock();
       lock.waitLock(10000);
       try {
-        deleteRowsForCode(sheet, code);
-        deleteRewardRecord(code);
-        return respond({ ok: true, rewards: emptyRewardSummary() }, callback);
+        const deletedActivities = deleteRowsForCode(sheet, code);
+        const deletedRewards = deleteRewardRecord(code);
+        const remainingActivities = loadRows(sheet, code).length;
+        if (remainingActivities) {
+          throw new Error("Reset verification failed: " + remainingActivities + " activities remain");
+        }
+        return respond({
+          ok: true,
+          rewards: emptyRewardSummary(),
+          deletedActivities: deletedActivities,
+          deletedRewards: deletedRewards,
+          remainingActivities: remainingActivities
+        }, callback);
       } finally {
         lock.releaseLock();
       }
@@ -252,7 +262,9 @@ function emptyRewardSummary() {
 function deleteRewardRecord(code) {
   const rewardsSheet = getRewardsSheet();
   const rowNumber = findRewardRow(rewardsSheet, code);
-  if (rowNumber) rewardsSheet.deleteRow(rowNumber);
+  if (!rowNumber) return 0;
+  rewardsSheet.deleteRow(rowNumber);
+  return 1;
 }
 
 function saveRewardRecord(record) {
@@ -370,9 +382,14 @@ function deleteEntry(sheet, code, entryId) {
 
 function deleteRowsForCode(sheet, code) {
   const data = sheet.getDataRange().getValues();
+  let deleted = 0;
   for (let i = data.length - 1; i >= 1; i--) {
-    if (String(data[i][0] || "") === code) sheet.deleteRow(i + 1);
+    if (sanitizeCode(data[i][0]) === code) {
+      sheet.deleteRow(i + 1);
+      deleted += 1;
+    }
   }
+  return deleted;
 }
 
 function sanitizeCode(code) {
