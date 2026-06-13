@@ -1,0 +1,168 @@
+<div id="ss-arcade" class="ss-arcade">
+  <div class="ss-arcade-head">
+    <div>
+      <h2>Learning Rewards Arcade</h2>
+      <p>Each game costs 20 points.</p>
+    </div>
+    <div class="ss-arcade-balance"><b id="ss-arcade-points">0</b> points</div>
+  </div>
+
+  <div class="ss-arcade-login">
+    <label>
+      <span>Learning code</span>
+      <input id="ss-arcade-code" maxlength="32" autocomplete="off" placeholder="Use the same tracker code">
+    </label>
+    <button id="ss-arcade-load" type="button">Load Points</button>
+    <div id="ss-arcade-status" role="status" aria-live="polite">Load your tracker code to enter the arcade.</div>
+  </div>
+
+  <div class="ss-game-grid">
+    <section class="ss-game-card">
+      <h3>Pong</h3>
+      <p>Defend your side and score five points against the computer.</p>
+      <button class="ss-play" data-game="pong" type="button">Play for 20</button>
+    </section>
+
+    <section class="ss-game-card">
+      <h3>Pac-Man Style Maze</h3>
+      <p>Collect every pellet while avoiding the roaming red guardian.</p>
+      <button class="ss-play" data-game="maze" type="button">Play for 20</button>
+    </section>
+
+    <section class="ss-game-card">
+      <h3>Space Shooter</h3>
+      <p>Move your ship, fire upward, and clear 20 floating targets.</p>
+      <button class="ss-play" data-game="shooter" type="button">Play for 20</button>
+    </section>
+  </div>
+
+  <div id="ss-game-stage" class="ss-game-stage" hidden>
+    <button id="ss-game-close" class="ss-game-close" type="button">Close Game</button>
+    <div id="ss-game-content"></div>
+  </div>
+</div>
+
+<style>
+.ss-arcade{
+  --blue:#1b597c;--blue-dark:#123f59;--gold:#d3bd62;--gold-light:#f5e8aa;
+  --ivory:#fffdf4;--paper:#f8f1d5;--ink:#29261f;--muted:#625d50;--line:#d8cda5;
+  max-width:1100px;margin:28px auto 40px;padding:28px;box-sizing:border-box;
+  background:var(--ivory);border:1px solid var(--line);border-radius:16px;color:var(--ink);
+  font-family:Montserrat,Arial,sans-serif;
+}
+.ss-arcade *{box-sizing:border-box;}
+.ss-arcade-head{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:18px;}
+.ss-arcade h2,.ss-arcade h3{font-family:"Playfair Display",Georgia,serif;color:var(--blue);}
+.ss-arcade h2{margin:0;font-size:34px;}.ss-arcade h3{margin:0 0 10px;font-size:23px;}
+.ss-arcade-head p,.ss-game-card p{margin:5px 0 0;color:var(--muted);line-height:1.5;}
+.ss-arcade-balance{min-width:130px;padding:12px 16px;text-align:center;background:var(--gold-light);border:1px solid #c7af4d;border-radius:999px;color:var(--blue-dark);font-weight:700;}
+.ss-arcade-balance b{font-size:24px;}
+.ss-arcade-login{display:grid;grid-template-columns:minmax(200px,1fr) auto;gap:10px 14px;padding:16px;background:var(--paper);border:1px solid var(--line);border-radius:10px;}
+.ss-arcade-login label{display:grid;gap:6px;font-size:13px;font-weight:700;}
+.ss-arcade input{width:100%;padding:11px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink);font:inherit;text-transform:uppercase;}
+.ss-arcade button{padding:11px 15px;border:1px solid var(--blue);border-radius:4px;background:var(--blue);color:#fff;cursor:pointer;font:700 12px Montserrat,Arial,sans-serif;letter-spacing:.5px;text-transform:uppercase;}
+.ss-arcade button:hover{background:var(--blue-dark);}.ss-arcade button:disabled{cursor:not-allowed;opacity:.55;}
+#ss-arcade-status{grid-column:1/-1;color:var(--muted);font-size:13px;font-weight:600;}
+#ss-arcade-status.error{color:#991b1b;}#ss-arcade-status.success{color:#166534;}
+.ss-game-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px;}
+.ss-game-card{display:flex;flex-direction:column;min-height:210px;padding:20px;border:1px solid var(--line);border-radius:12px;background:#fff;}
+.ss-game-card .ss-play{width:100%;margin-top:auto;background:var(--blue);}
+.ss-game-stage{position:relative;margin-top:18px;padding:24px;border:2px solid var(--gold);border-radius:12px;background:var(--paper);text-align:center;}
+.ss-game-stage[hidden]{display:none;}.ss-game-close{position:absolute;right:14px;top:14px;background:#fff!important;color:var(--blue-dark)!important;}
+#ss-game-content{padding:38px 10px 10px;}
+.ss-game-title{font:700 28px "Playfair Display",Georgia,serif;color:var(--blue);margin-bottom:18px;}
+.ss-game-hud{display:flex;justify-content:space-between;gap:12px;margin:0 auto 10px;max-width:720px;color:var(--blue-dark);font-weight:700;}
+.ss-game-canvas{display:block;width:100%;max-width:720px;height:auto;margin:0 auto;border:3px solid var(--blue);border-radius:8px;background:#071728;touch-action:none;}
+.ss-game-help{margin:10px 0 0;color:var(--muted);font-size:13px;}
+.ss-touch-controls{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:12px;}
+.ss-touch-controls button{min-width:54px;padding:10px;background:var(--blue-dark);}
+.ss-direction-pad{display:grid;grid-template-columns:repeat(3,54px);justify-content:center;gap:6px;}
+.ss-direction-pad button:nth-child(1){grid-column:2}.ss-direction-pad button:nth-child(2){grid-column:1}.ss-direction-pad button:nth-child(3){grid-column:2}.ss-direction-pad button:nth-child(4){grid-column:3}
+@media(max-width:700px){
+  .ss-arcade{padding:18px;margin:20px auto;}.ss-arcade-head{align-items:flex-start;flex-direction:column;}.ss-arcade-balance{width:100%;}
+  .ss-arcade-login,.ss-game-grid{grid-template-columns:1fr;}.ss-game-card{min-height:180px;}.ss-game-close{position:static;margin-bottom:10px;}
+  #ss-game-content{padding-top:10px;}
+}
+</style>
+
+<script>
+(function(){
+  var API_URL="https://script.google.com/macros/s/AKfycbw3kefZs4U7XR7F93nUiKb-FU8EPL3JxU-laq9wWIlL5jaEjx5Za_GSJXSs9Mv0bZu-Ig/exec";
+  var code="",points=0,busy=false;
+  function $(id){return document.getElementById(id);}
+  function cleanCode(value){return String(value||"").trim().toUpperCase().replace(/[^A-Z0-9\-]/g,"").slice(0,32);}
+  function status(message,kind){var el=$("ss-arcade-status");el.textContent=message;el.className=kind||"";}
+  function setPoints(value){points=Number(value)||0;$("ss-arcade-points").textContent=String(points);document.querySelectorAll("#ss-arcade .ss-play").forEach(function(button){button.disabled=busy||!code||points<20;});}
+  function setBusy(value){busy=value;$("ss-arcade-load").disabled=value;setPoints(points);}
+  function api(params){return new Promise(function(resolve,reject){var cb="ssArcade_"+Date.now()+"_"+Math.floor(Math.random()*1e6),script=document.createElement("script"),timeout;params.callback=cb;var query=Object.keys(params).map(function(key){return encodeURIComponent(key)+"="+encodeURIComponent(params[key] == null ? "" : params[key]);}).join("&");function done(){clearTimeout(timeout);if(script.parentNode)script.parentNode.removeChild(script);try{delete window[cb];}catch(e){window[cb]=undefined;}}window[cb]=function(data){done();data&&data.ok?resolve(data):reject(new Error(data&&data.error?data.error:"Arcade request failed."));};script.onerror=function(){done();reject(new Error("Could not reach the rewards database."));};timeout=setTimeout(function(){done();reject(new Error("The rewards database took too long to respond."));},15000);script.src=API_URL+"?"+query;document.head.appendChild(script);});}
+  function loadRewards(){if(busy)return;code=cleanCode($("ss-arcade-code").value);$("ss-arcade-code").value=code;if(!code){status("Enter your learning code first.","error");return;}setBusy(true);status("Loading points...","");api({action:"rewards",code:code}).then(function(data){setPoints(data.rewards.points);try{localStorage.setItem("SS_REWARDS_CODE",code);}catch(e){}status("Arcade ready. Choose a game.","success");}).catch(function(err){code="";setPoints(0);status(err.message,"error");}).then(function(){setBusy(false);});}
+  function buyGame(game){if(busy||!code)return;setBusy(true);status("Using 20 points to start the game...","");api({action:"play",code:code,game:game}).then(function(data){setPoints(data.rewards.points);try{window.dispatchEvent(new CustomEvent("ss-rewards-updated",{detail:{code:code,rewards:data.rewards}}));}catch(e){}status("Game started. You have "+points+" points left.","success");openGame(game);}).catch(function(err){status(err.message,"error");}).then(function(){setBusy(false);});}
+  function openGame(game){if(window.ssStartArcadeGame)window.ssStartArcadeGame(game);}
+  document.addEventListener("click",function(e){var t=e.target;if(!t)return;if(t.id==="ss-arcade-load"){loadRewards();return;}if(t.classList&&t.classList.contains("ss-play")){buyGame(t.getAttribute("data-game"));return;}if(t.id==="ss-game-close"){if(window.ssStopArcadeGame)window.ssStopArcadeGame();$("ss-game-stage").hidden=true;$("ss-game-content").innerHTML="";}},true);
+  document.addEventListener("keydown",function(e){if(e.key==="Enter"&&e.target&&e.target.id==="ss-arcade-code")loadRewards();},true);
+  window.addEventListener("ss-rewards-updated",function(e){if(e.detail&&e.detail.code){code=e.detail.code;$("ss-arcade-code").value=code;setPoints(e.detail.rewards.points);}});
+  try{var saved=cleanCode(localStorage.getItem("SS_REWARDS_CODE"));if(saved){$("ss-arcade-code").value=saved;loadRewards();}}catch(e){}
+  setPoints(0);
+})();
+(function(){
+  var cleanup=function(){};
+  function $(id){return document.getElementById(id);}
+  function stop(){cleanup();cleanup=function(){};}
+  function shell(title,help,controls){
+    stop();
+    $("ss-game-stage").hidden=false;
+    $("ss-game-content").innerHTML='<div class="ss-game-title">'+title+'</div><div class="ss-game-hud"><span id="ss-game-score">Score: 0</span><span id="ss-game-message">Playing</span></div><canvas id="ss-game-canvas" class="ss-game-canvas" width="720" height="405"></canvas><p class="ss-game-help">'+help+'</p>'+(controls||"");
+    $("ss-game-stage").scrollIntoView({behavior:"smooth",block:"nearest"});
+  }
+  function button(direction,label){return '<button type="button" data-control="'+direction+'">'+label+'</button>';}
+
+  function pong(){
+    shell("Pong","Use W/S or the arrow keys. On touch screens, use the buttons below.",'<div class="ss-touch-controls">'+button("up","Up")+button("down","Down")+'</div>');
+    var canvas=$("ss-game-canvas"),ctx=canvas.getContext("2d"),raf=0,running=true,keys={},player=160,computer=160,ball={x:360,y:202,vx:5,vy:3},left=0,right=0;
+    function reset(direction){ball.x=360;ball.y=202;ball.vx=5*direction;ball.vy=Math.random()*5-2.5;}
+    function key(e,on){if(["ArrowUp","ArrowDown","w","W","s","S"].indexOf(e.key)>=0){e.preventDefault();keys[e.key.toLowerCase()]=on;}}
+    function down(e){key(e,true);}function up(e){key(e,false);}document.addEventListener("keydown",down);document.addEventListener("keyup",up);
+    document.querySelectorAll("#ss-game-stage [data-control]").forEach(function(b){var k=b.getAttribute("data-control")==="up"?"arrowup":"arrowdown";b.onpointerdown=function(){keys[k]=true;};b.onpointerup=b.onpointerleave=function(){keys[k]=false;};});
+    function loop(){
+      if(!running)return;
+      if(keys.arrowup||keys.w)player-=7;if(keys.arrowdown||keys.s)player+=7;player=Math.max(0,Math.min(325,player));
+      computer+=Math.sign(ball.y-(computer+40))*3.7;computer=Math.max(0,Math.min(325,computer));ball.x+=ball.vx;ball.y+=ball.vy;
+      if(ball.y<8||ball.y>397){ball.vy*=-1;ball.y=Math.max(8,Math.min(397,ball.y));}
+      if(ball.x<38&&ball.x>24&&ball.y>player&&ball.y<player+80&&ball.vx<0){ball.vx=Math.abs(ball.vx)*1.04;ball.vy+=(ball.y-player-40)*.06;}
+      if(ball.x>682&&ball.x<696&&ball.y>computer&&ball.y<computer+80&&ball.vx>0){ball.vx=-Math.abs(ball.vx)*1.04;ball.vy+=(ball.y-computer-40)*.06;}
+      if(ball.x<0){right++;reset(1);}if(ball.x>720){left++;reset(-1);}
+      ctx.fillStyle="#071728";ctx.fillRect(0,0,720,405);ctx.strokeStyle="#d3bd62";ctx.setLineDash([10,10]);ctx.beginPath();ctx.moveTo(360,0);ctx.lineTo(360,405);ctx.stroke();ctx.setLineDash([]);
+      ctx.fillStyle="#f5e8aa";ctx.fillRect(24,player,14,80);ctx.fillRect(682,computer,14,80);ctx.beginPath();ctx.arc(ball.x,ball.y,9,0,Math.PI*2);ctx.fill();
+      $("ss-game-score").textContent=left+" - "+right;if(left>=5||right>=5){running=false;$("ss-game-message").textContent=left>=5?"You win!":"Computer wins";return;}raf=requestAnimationFrame(loop);
+    }
+    loop();cleanup=function(){running=false;cancelAnimationFrame(raf);document.removeEventListener("keydown",down);document.removeEventListener("keyup",up);};
+  }
+
+  function maze(){
+    shell("Pac-Man Style Maze","Use the arrow keys or buttons. Collect every gold pellet and avoid the red guardian.",'<div class="ss-touch-controls ss-direction-pad">'+button("up","Up")+button("left","Left")+button("down","Down")+button("right","Right")+'</div>');
+    var canvas=$("ss-game-canvas"),ctx=canvas.getContext("2d"),raf=0,running=true,cell=45,cols=16,rows=9;
+    var walls=[[1,1],[2,1],[4,1],[5,1],[7,1],[8,1],[10,1],[11,1],[13,1],[14,1],[2,2],[5,2],[8,2],[11,2],[14,2],[2,3],[3,3],[5,3],[6,3],[9,3],[10,3],[12,3],[13,3],[2,5],[3,5],[5,5],[6,5],[9,5],[10,5],[12,5],[13,5],[2,6],[5,6],[8,6],[11,6],[14,6],[1,7],[2,7],[4,7],[5,7],[7,7],[8,7],[10,7],[11,7],[13,7],[14,7]],wallSet={};
+    walls.forEach(function(w){wallSet[w[0]+","+w[1]]=true;});var player={x:0,y:0},enemy={x:15,y:8},pellets={},score=0,lastEnemy=0;
+    for(var y=0;y<rows;y++)for(var x=0;x<cols;x++)if(!wallSet[x+","+y]&&!(x===0&&y===0))pellets[x+","+y]=true;
+    function hit(){if(player.x===enemy.x&&player.y===enemy.y){running=false;$("ss-game-message").textContent="Caught! Round over.";}}
+    function move(dx,dy){if(!running)return;var nx=player.x+dx,ny=player.y+dy;if(nx>=0&&nx<cols&&ny>=0&&ny<rows&&!wallSet[nx+","+ny]){player.x=nx;player.y=ny;var k=nx+","+ny;if(pellets[k]){delete pellets[k];score++;$("ss-game-score").textContent="Pellets: "+score;if(Object.keys(pellets).length===0){running=false;$("ss-game-message").textContent="Maze cleared!";}}hit();}}
+    function key(e){var m={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]}[e.key];if(m){e.preventDefault();move(m[0],m[1]);}}document.addEventListener("keydown",key);
+    document.querySelectorAll("#ss-game-stage [data-control]").forEach(function(b){b.onclick=function(){var m={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]}[b.getAttribute("data-control")];move(m[0],m[1]);};});
+    function enemyStep(){var choices=[[1,0],[-1,0],[0,1],[0,-1]].map(function(m){return{x:enemy.x+m[0],y:enemy.y+m[1]};}).filter(function(p){return p.x>=0&&p.x<cols&&p.y>=0&&p.y<rows&&!wallSet[p.x+","+p.y];});choices.sort(function(a,b){return Math.abs(a.x-player.x)+Math.abs(a.y-player.y)-Math.abs(b.x-player.x)-Math.abs(b.y-player.y);});if(choices.length)enemy=choices[Math.random()<.7?0:Math.floor(Math.random()*choices.length)];hit();}
+    function draw(time){if(!running)return;if(time-lastEnemy>650){enemyStep();lastEnemy=time;}ctx.fillStyle="#071728";ctx.fillRect(0,0,720,405);ctx.fillStyle="#1b597c";walls.forEach(function(w){ctx.fillRect(w[0]*cell+2,w[1]*cell+2,cell-4,cell-4);});ctx.fillStyle="#f5e8aa";Object.keys(pellets).forEach(function(k){var p=k.split(",").map(Number);ctx.beginPath();ctx.arc(p[0]*cell+22.5,p[1]*cell+22.5,4,0,Math.PI*2);ctx.fill();});ctx.fillStyle="#facc15";ctx.beginPath();ctx.arc(player.x*cell+22.5,player.y*cell+22.5,15,.25,Math.PI*2-.25);ctx.lineTo(player.x*cell+22.5,player.y*cell+22.5);ctx.fill();ctx.fillStyle="#dc2626";ctx.beginPath();ctx.arc(enemy.x*cell+22.5,enemy.y*cell+20,15,Math.PI,0);ctx.lineTo(enemy.x*cell+37.5,enemy.y*cell+37);ctx.lineTo(enemy.x*cell+7.5,enemy.y*cell+37);ctx.fill();raf=requestAnimationFrame(draw);}raf=requestAnimationFrame(draw);
+    cleanup=function(){running=false;cancelAnimationFrame(raf);document.removeEventListener("keydown",key);};
+  }
+
+  function shooter(){
+    shell("Space Shooter","Use A/D or arrow keys to move and Space to fire. Touch controls are below.",'<div class="ss-touch-controls">'+button("left","Left")+button("fire","Fire")+button("right","Right")+'</div>');
+    var canvas=$("ss-game-canvas"),ctx=canvas.getContext("2d"),raf=0,running=true,keys={},shipX=340,bullets=[],targets=[],score=0,lastSpawn=0,lastShot=0;
+    function key(e,on){if(["ArrowLeft","ArrowRight","a","A","d","D"," "].indexOf(e.key)>=0){e.preventDefault();keys[e.key.toLowerCase()]=on;}}function down(e){key(e,true);}function up(e){key(e,false);}document.addEventListener("keydown",down);document.addEventListener("keyup",up);
+    document.querySelectorAll("#ss-game-stage [data-control]").forEach(function(b){var d=b.getAttribute("data-control"),k=d==="left"?"arrowleft":d==="right"?"arrowright":" ";b.onpointerdown=function(){keys[k]=true;};b.onpointerup=b.onpointerleave=function(){keys[k]=false;};});
+    function loop(time){if(!running)return;if(keys.arrowleft||keys.a)shipX-=6;if(keys.arrowright||keys.d)shipX+=6;shipX=Math.max(8,Math.min(672,shipX));if(keys[" "]&&time-lastShot>260){bullets.push({x:shipX+20,y:350});lastShot=time;}if(time-lastSpawn>650){targets.push({x:15+Math.random()*670,y:-20,speed:1.3+Math.random()*1.8});lastSpawn=time;}bullets.forEach(function(b){b.y-=7;});targets.forEach(function(t){t.y+=t.speed;});for(var i=targets.length-1;i>=0;i--)for(var j=bullets.length-1;j>=0;j--)if(Math.abs(targets[i].x-bullets[j].x)<20&&Math.abs(targets[i].y-bullets[j].y)<20){targets.splice(i,1);bullets.splice(j,1);score++;$("ss-game-score").textContent="Targets: "+score;break;}bullets=bullets.filter(function(b){return b.y>-10;});targets=targets.filter(function(t){return t.y<430;});ctx.fillStyle="#071728";ctx.fillRect(0,0,720,405);ctx.fillStyle="#fff";for(var s=0;s<45;s++)ctx.fillRect((s*83)%720,(s*47)%405,2,2);ctx.fillStyle="#f5e8aa";ctx.beginPath();ctx.moveTo(shipX+20,345);ctx.lineTo(shipX,390);ctx.lineTo(shipX+40,390);ctx.closePath();ctx.fill();ctx.fillStyle="#38bdf8";bullets.forEach(function(b){ctx.fillRect(b.x-2,b.y,4,13);});ctx.fillStyle="#dc2626";targets.forEach(function(t){ctx.beginPath();ctx.arc(t.x,t.y,15,0,Math.PI*2);ctx.fill();ctx.fillStyle="#f5e8aa";ctx.fillRect(t.x-7,t.y-2,14,4);ctx.fillStyle="#dc2626";});if(score>=20){running=false;$("ss-game-message").textContent="Sector cleared!";return;}raf=requestAnimationFrame(loop);}raf=requestAnimationFrame(loop);
+    cleanup=function(){running=false;cancelAnimationFrame(raf);document.removeEventListener("keydown",down);document.removeEventListener("keyup",up);};
+  }
+
+  window.ssStartArcadeGame=function(game){if(game==="pong")pong();if(game==="maze")maze();if(game==="shooter")shooter();};
+  window.ssStopArcadeGame=stop;
+})();
+</script>
