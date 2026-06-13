@@ -46,10 +46,11 @@
 .ss-arcade{
   --blue:#1b597c;--blue-dark:#123f59;--gold:#d3bd62;--gold-light:#f5e8aa;
   --ivory:#fffdf4;--paper:#f8f1d5;--ink:#29261f;--muted:#625d50;--line:#d8cda5;
-  max-width:1100px;margin:28px auto 40px;padding:28px;box-sizing:border-box;
+  width:calc(100% - 16px);max-width:1100px;margin:28px auto 40px;padding:28px;box-sizing:border-box;
   background:var(--ivory);border:1px solid var(--line);border-radius:16px;color:var(--ink);
   font-family:Montserrat,Arial,sans-serif;
 }
+html,body{margin:0;padding:0;background:transparent;}
 .ss-arcade *{box-sizing:border-box;}
 .ss-arcade-head{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:18px;}
 .ss-arcade h2,.ss-arcade h3{font-family:"Playfair Display",Georgia,serif;color:var(--blue);}
