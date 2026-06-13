@@ -422,7 +422,10 @@ function respond(obj, callbackName) {
     }).replace(/</g, "\\u003c");
     return HtmlService.createHtmlOutput(
       "<!doctype html><html><head><meta charset=\"utf-8\"></head><body>" +
-      "<script>window.parent.postMessage(" + message + ", '*');<\/script>" +
+      "<script>(function(){var message=" + message + ";" +
+      "window.parent.postMessage(message, '*');" +
+      "if(window.top !== window.parent) window.top.postMessage(message, '*');" +
+      "}());<\/script>" +
       "</body></html>"
     ).setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
   }
