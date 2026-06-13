@@ -1579,14 +1579,25 @@
 
   function resetAll(){
     if(busy || !currentCode || timer) return;
-    if(!confirm("Reset everything?")) return;
+    if(!confirm("Permanently erase all activities, minutes, milestones, and points for this learning code?")) return;
     setBusy(true);
-    setStatus("Resetting your tracker...", "");
-    api({ action:"reset", code:currentCode }).then(function(){
+    setStatus("Erasing all saved progress for this learning code...", "");
+    api({ action:"reset", code:currentCode }).then(function(data){
       state = defaultState();
+      setRewards(data.rewards || {
+        points:0,
+        lifetimeActivities:0,
+        lifetimeMinutes:0,
+        learningMilestones:0,
+        minuteMilestones:0,
+        gamesPlayed:0,
+        learningReward:5,
+        minuteReward:10,
+        gameCost:20
+      });
       render();
       closeArchive();
-      setStatus("Your tracker was reset.", "success");
+      setStatus("All activities, minutes, milestones, and points were erased.", "success");
     }).catch(function(err){
       setStatus(err.message, "error");
     }).then(function(){ setBusy(false); });
