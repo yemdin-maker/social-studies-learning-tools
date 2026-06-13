@@ -168,6 +168,13 @@ function doGet(e) {
   }
 }
 
+function doPost(e) {
+  const p = Object.assign({}, e && e.parameter ? e.parameter : {});
+  const transportId = cleanText(p.transportId, 100).replace(/[^a-zA-Z0-9_-]/g, "");
+  p.callback = "__SS_POST__" + transportId;
+  return doGet({ parameter: p });
+}
+
 function getRewardsSheet() {
   const book = SpreadsheetApp.getActive();
   let sheet = book.getSheetByName(REWARDS_SHEET_NAME);
@@ -406,6 +413,19 @@ function cleanText(value, maxLength) {
 
 function respond(obj, callbackName) {
   const jsonText = JSON.stringify(obj);
+  if (callbackName.indexOf("__SS_POST__") === 0) {
+    const transportId = callbackName.slice(11).replace(/[^a-zA-Z0-9_-]/g, "");
+    const message = JSON.stringify({
+      type: "social-studies-tracker-result",
+      transportId: transportId,
+      result: obj
+    }).replace(/</g, "\\u003c");
+    return HtmlService.createHtmlOutput(
+      "<!doctype html><html><head><meta charset=\"utf-8\"></head><body>" +
+      "<script>window.parent.postMessage(" + message + ", '*');<\/script>" +
+      "</body></html>"
+    ).setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  }
   if (callbackName) {
     const safeCallback = callbackName.replace(/[^a-zA-Z0-9_$\.]/g, "");
     return ContentService.createTextOutput(safeCallback + "(" + jsonText + ");")
