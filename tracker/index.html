@@ -814,7 +814,7 @@
 
 #ss-app.ss-app{
   box-sizing:border-box;
-  width:100%;
+  width:calc(100% - 16px);
   margin:0 auto !important;
   background:var(--ss-ivory);
   border:1px solid var(--ss-line);
@@ -1777,9 +1777,12 @@ body{
     }
   }, 100);
 
+  var lastReportedHeight = 0;
   function reportFrameHeight(){
     var app = $("ss-app");
     var height = app ? Math.ceil(app.getBoundingClientRect().bottom) : document.documentElement.scrollHeight;
+    if(height === lastReportedHeight) return;
+    lastReportedHeight = height;
     window.parent.postMessage({ type:"ss-tracker-height", height:height }, "*");
   }
 
