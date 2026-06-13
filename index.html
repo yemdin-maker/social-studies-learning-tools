@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>U.S. History Help Learning Tools</title>
+  <style>
+    :root{color-scheme:light;--blue:#1b597c;--gold:#d3bd62;--paper:#fffdf4;--ink:#29261f;--muted:#625d50}
+    *{box-sizing:border-box}
+    body{margin:0;background:#f8f1d5;color:var(--ink);font-family:Montserrat,Arial,sans-serif}
+    main{max-width:960px;margin:0 auto;padding:64px 24px}
+    h1,h2{font-family:Georgia,serif;color:var(--blue)}
+    h1{margin:0 0 12px;font-size:clamp(36px,7vw,64px)}
+    .intro{max-width:680px;margin:0 0 36px;color:var(--muted);font-size:18px;line-height:1.65}
+    .tools{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    article{display:flex;min-height:240px;flex-direction:column;padding:24px;background:var(--paper);border:1px solid #d8cda5;border-radius:14px}
+    article p{color:var(--muted);line-height:1.55}
+    a{display:inline-block;margin-top:auto;padding:12px 16px;background:var(--blue);color:#fff;border-radius:6px;text-align:center;text-decoration:none;font-weight:700}
+    a:hover{background:#123f59}
+    @media(max-width:720px){main{padding:40px 18px}.tools{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Learning Tools</h1>
+    <p class="intro">Social studies practice, learning rewards, and tutoring scheduling for U.S. History Help students.</p>
+    <section class="tools" aria-label="Learning tools">
+      <article>
+        <h2>Learning Tracker</h2>
+        <p>Time activities, save progress to Google Sheets, and earn milestone points.</p>
+        <a href="tracker/">Open Tracker</a>
+      </article>
+      <article>
+        <h2>Rewards Arcade</h2>
+        <p>Use earned learning points to play Pong, a maze game, or Space Shooter.</p>
+        <a href="arcade/">Open Arcade</a>
+      </article>
+      <article>
+        <h2>Tutoring Sessions</h2>
+        <p>View available tutoring times and request a session.</p>
+        <a href="scheduling/">Schedule a Session</a>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
