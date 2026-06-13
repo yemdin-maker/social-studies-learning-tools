@@ -1217,40 +1217,55 @@ body{
         reject(new Error("The Google Apps Script URL has not been added yet."));
         return;
       }
-
-      var callbackName = "ssJsonp_" + Date.now() + "_" + Math.floor(Math.random() * 1000000);
-      var script = document.createElement("script");
+      var transportId = "ssTracker_" + Date.now() + "_" + Math.floor(Math.random() * 1000000);
+      var frameName = transportId + "_frame";
+      var iframe = document.createElement("iframe");
+      var form = document.createElement("form");
       var timeout;
 
-      params.callback = callbackName;
-      var query = Object.keys(params).map(function(key){
-        return encodeURIComponent(key) + "=" + encodeURIComponent(params[key] == null ? "" : params[key]);
-      }).join("&");
+      params.transportId = transportId;
+      iframe.name = frameName;
+      iframe.hidden = true;
+      iframe.setAttribute("aria-hidden", "true");
+      form.method = "POST";
+      form.action = API_URL;
+      form.target = frameName;
+      form.hidden = true;
+      form.acceptCharset = "UTF-8";
+
+      Object.keys(params).forEach(function(key){
+        var input = document.createElement("input");
+        input.type = "hidden";
+        input.name = key;
+        input.value = params[key] == null ? "" : params[key];
+        form.appendChild(input);
+      });
 
       function cleanup(){
         clearTimeout(timeout);
-        if(script.parentNode) script.parentNode.removeChild(script);
-        try{ delete window[callbackName]; }catch(e){ window[callbackName] = undefined; }
+        window.removeEventListener("message", receiveResult);
+        if(form.parentNode) form.parentNode.removeChild(form);
+        if(iframe.parentNode) iframe.parentNode.removeChild(iframe);
       }
 
-      window[callbackName] = function(data){
+      function receiveResult(event){
+        var message = event.data;
+        if(!message || message.type !== "social-studies-tracker-result" || message.transportId !== transportId) return;
         cleanup();
+        var data = message.result;
         if(data && data.ok) resolve(data);
         else reject(new Error(data && data.error ? data.error : "The tracker request failed."));
-      };
-
-      script.onerror = function(){
-        cleanup();
-        reject(new Error("Could not reach the tracker database."));
-      };
+      }
 
       timeout = setTimeout(function(){
         cleanup();
-        reject(new Error("The tracker database took too long to respond."));
-      }, 15000);
+        reject(new Error("The tracker database took too long to respond. Please check your connection and try again."));
+      }, 20000);
 
-      script.src = API_URL + (API_URL.indexOf("?") === -1 ? "?" : "&") + query;
-      document.head.appendChild(script);
+      window.addEventListener("message", receiveResult);
+      document.body.appendChild(iframe);
+      document.body.appendChild(form);
+      form.submit();
     });
   }
 
