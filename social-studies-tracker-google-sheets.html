@@ -1583,18 +1583,16 @@
     setBusy(true);
     setStatus("Erasing all saved progress for this learning code...", "");
     api({ action:"reset", code:currentCode }).then(function(data){
-      state = defaultState();
-      setRewards(data.rewards || {
-        points:0,
-        lifetimeActivities:0,
-        lifetimeMinutes:0,
-        learningMilestones:0,
-        minuteMilestones:0,
-        gamesPlayed:0,
-        learningReward:5,
-        minuteReward:10,
-        gameCost:20
-      });
+      if(Number(data.remainingActivities) !== 0){
+        throw new Error("The reset could not be verified. Please try again.");
+      }
+      return api({ action:"load", code:currentCode });
+    }).then(function(data){
+      mapServerRows(data.rows);
+      setRewards(data.rewards);
+      if(state.items.length){
+        throw new Error("The reset did not remove every activity. Please try again.");
+      }
       render();
       closeArchive();
       setStatus("All activities, minutes, milestones, and points were erased.", "success");
