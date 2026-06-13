@@ -813,11 +813,20 @@
 }
 
 #ss-app.ss-app{
+  margin:0 auto !important;
   background:var(--ss-ivory);
   border:1px solid var(--ss-line);
   border-radius:16px;
   color:var(--ss-ink);
   font-family:"Playfair Display", Georgia, serif;
+}
+
+html,
+body{
+  margin:0;
+  padding:0;
+  background:transparent;
+  overflow:hidden;
 }
 
 #ss-app .ss-title{
@@ -1767,10 +1776,8 @@
   }, 100);
 
   function reportFrameHeight(){
-    var height = Math.max(
-      document.documentElement.scrollHeight,
-      document.body ? document.body.scrollHeight : 0
-    );
+    var app = $("ss-app");
+    var height = app ? Math.ceil(app.getBoundingClientRect().bottom) : document.documentElement.scrollHeight;
     window.parent.postMessage({ type:"ss-tracker-height", height:height }, "*");
   }
 
