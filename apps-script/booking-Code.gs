@@ -39,6 +39,33 @@ function doGet(e) {
   }
 }
 
+function doPost(e) {
+  const p = e && e.parameter ? e.parameter : {};
+  const action = String(p.action || "").toLowerCase();
+  const requestId = cleanText(p.requestId, 100);
+  let result;
+
+  try {
+    result = action === "book"
+      ? createBooking(p)
+      : { ok: false, error: "Invalid action" };
+  } catch (err) {
+    result = { ok: false, error: String(err.message || err) };
+  }
+
+  const message = JSON.stringify({
+    type: "history-help-booking-result",
+    requestId: requestId,
+    result: result
+  }).replace(/</g, "\\u003c");
+
+  return HtmlService.createHtmlOutput(
+    "<!doctype html><html><head><meta charset=\"utf-8\"></head><body>" +
+    "<script>window.parent.postMessage(" + message + ", '*');<\/script>" +
+    "</body></html>"
+  ).setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}
+
 function createBooking(p) {
   const date = cleanDate(p.date);
   const time = cleanTime(p.time);
